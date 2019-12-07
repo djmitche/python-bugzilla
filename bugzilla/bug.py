@@ -43,6 +43,7 @@ class Bug(object):
         log.debug("Bug(%s)", sorted(dict.keys()))
         self._update_dict(dict)
 
+        # TODO: guess this from REST URLs, too
         self.weburl = bugzilla.url.replace('xmlrpc.cgi',
                                            'show_bug.cgi?id=%i' % self.bug_id)
 

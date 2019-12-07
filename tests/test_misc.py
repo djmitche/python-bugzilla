@@ -19,6 +19,7 @@ import pytest
 
 import bugzilla
 import tests
+from bugzilla.backendxmlrpc import BackendXMLRPC
 
 
 class MiscCLI(unittest.TestCase):
@@ -56,14 +57,14 @@ class MiscAPI(unittest.TestCase):
     """
     def testUserAgent(self):
         b3 = tests.make_bz("3.0.0")
-        assert "python-bugzilla" in b3.user_agent
+        assert "python-bugzilla" in b3.backend.user_agent
 
     def test_fixurl(self):
-        assert (bugzilla.Bugzilla.fix_url("example.com") ==
+        assert (BackendXMLRPC.fix_url("example.com") ==
             "https://example.com/xmlrpc.cgi")
-        assert (bugzilla.Bugzilla.fix_url("example.com/xmlrpc.cgi") ==
+        assert (BackendXMLRPC.fix_url("example.com/xmlrpc.cgi") ==
             "https://example.com/xmlrpc.cgi")
-        assert (bugzilla.Bugzilla.fix_url("http://example.com/somepath.cgi") ==
+        assert (BackendXMLRPC.fix_url("http://example.com/somepath.cgi") ==
             "http://example.com/somepath.cgi")
 
     def testCookies(self):
@@ -85,7 +86,7 @@ class MiscAPI(unittest.TestCase):
     def test_readconfig(self):
         # Testing for bugzillarc handling
         bzapi = tests.make_bz("4.4.0", rhbz=True)
-        bzapi.url = "example.com"
+        bzapi.backend.url = "example.com"
         temp = tempfile.NamedTemporaryFile(mode="w")
 
         content = """
@@ -95,15 +96,15 @@ user=test1
 password=test2"""
         temp.write(content)
         temp.flush()
-        bzapi.readconfig(temp.name)
-        assert bzapi.user == "test1"
-        assert bzapi.password == "test2"
-        assert bzapi.api_key is None
+        bzapi.backend.readconfig(temp.name)
+        assert bzapi.backend.user == "test1"
+        assert bzapi.backend.password == "test2"
+        assert bzapi.backend.api_key is None
 
-        bzapi.url = "foo.example.com"
-        bzapi.user = None
-        bzapi.readconfig(temp.name)
-        assert bzapi.user is None
+        bzapi.backend.url = "foo.example.com"
+        bzapi.backend.user = None
+        bzapi.backend.readconfig(temp.name)
+        assert bzapi.backend.user is None
 
         content = """
 [foo.example.com]
@@ -113,19 +114,19 @@ api_key=123abc
 """
         temp.write(content)
         temp.flush()
-        bzapi.readconfig(temp.name)
-        assert bzapi.user == "test3"
-        assert bzapi.password == "test4"
-        assert bzapi.api_key == "123abc"
+        bzapi.backend.readconfig(temp.name)
+        assert bzapi.backend.user == "test3"
+        assert bzapi.backend.password == "test4"
+        assert bzapi.backend.api_key == "123abc"
 
-        bzapi.url = "bugzilla.redhat.com"
-        bzapi.user = None
-        bzapi.password = None
-        bzapi.api_key = None
-        bzapi.readconfig(temp.name)
-        assert bzapi.user is None
-        assert bzapi.password is None
-        assert bzapi.api_key is None
+        bzapi.backend.url = "bugzilla.redhat.com"
+        bzapi.backend.user = None
+        bzapi.backend.password = None
+        bzapi.backend.api_key = None
+        bzapi.backend.readconfig(temp.name)
+        assert bzapi.backend.user is None
+        assert bzapi.backend.password is None
+        assert bzapi.backend.api_key is None
 
 
     def testPostTranslation(self):

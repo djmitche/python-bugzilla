@@ -101,7 +101,7 @@ def get_default_url():
     """
     Grab a default URL from bugzillarc [DEFAULT] url=X
     """
-    from bugzilla.base import _open_bugzillarc
+    from bugzilla._rc import _open_bugzillarc
     cfg = _open_bugzillarc()
     if cfg:
         cfgurl = cfg.defaults().get("url", None)

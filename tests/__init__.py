@@ -33,7 +33,7 @@ def make_bz(version, *args, **kwargs):
     if "url" not in kwargs:
         kwargs["url"] = None
     bz = cls(*args, **kwargs)
-    bz._set_bz_version(version)  # pylint: disable=protected-access
+    bz.backend._set_bz_version(version)  # pylint: disable=protected-access
     return bz
 
 
